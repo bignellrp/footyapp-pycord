@@ -1,6 +1,7 @@
 import logging
 import socket
 from abc import ABC
+import os
 
 from aiohttp import AsyncResolver, ClientSession, TCPConnector
 from discord import Cog, Embed, HTTPException, Interaction
@@ -11,6 +12,23 @@ from bot.core import constants, settings
 
 log = logging.getLogger(__name__)
 
+########## CUSTOM CODE STARTS HERE ##########
+
+##Initialise our app and the bot itself
+##https://discordpy.readthedocs.io/en/latest/intents.html
+
+intents = discord.Intents.default()
+intents.members = True
+token = os.getenv("DISCORD_TOKEN_DEV")
+bot = commands.Bot(command_prefix='$', intents=intents)
+
+##Register Cogs with Discord
+for file in os.listdir("cogs"):
+    if file.endswith(".py"):
+        name = file[:-3]
+        bot.load_extension(f"cogs.{name}")
+
+########## CUSTOM CODE ENDS HERE ##########
 
 class Bot(commands.Bot, ABC):
     """Base bot class."""
